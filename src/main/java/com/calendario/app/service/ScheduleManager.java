@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.calendario.app.model.Service;
+import com.calendario.app.model.response.ScheduleResponse;
 import com.calendario.domain.infrastructure.service.ServiceBeanImplementation;
 import com.calendario.domain.model.ServiceInstance;
 import com.calendario.persistence.appointment.AppointmentRepository;
@@ -51,6 +52,29 @@ public class ScheduleManager {
     public Tuple[] getScheduleAvailable(LocalDate queryDate, Long serviceId) {
 
         logger.info("Getting available schedule for date {} and service id {}", queryDate, serviceId);
+        
+        Service serviceById = serviceBeanImplementation.getService(serviceId);
+        List<ServiceInstance> serviceInstances = serviceBeanImplementation.getInstanceService(serviceId);
+
+        return getScheduleAvailable(queryDate,serviceById,serviceInstances);
+    }
+    
+    public Tuple[] getScheduleInstanceAvailable(LocalDate queryDate, Long serviceId,Long serviceInstanceId) {
+        
+        logger.info("Getting available schedule for date {} and instance id {}", queryDate, serviceInstanceId);
+        
+        Service serviceById = serviceBeanImplementation.getService(serviceId);
+
+        List<ServiceInstance> serviceInstances = serviceBeanImplementation.getInstanceService(serviceId);
+
+        ServiceInstance findServiceInstanceOrError = serviceInstances.stream()
+        .filter(t -> t.serviceInstanceId().equals(serviceInstanceId)).findAny().orElseThrow(()-> new RuntimeException("Service Instance not found"));
+
+        return getScheduleAvailable(queryDate,serviceById,List.of(findServiceInstanceOrError));
+        
+    }
+
+    public Tuple[] getScheduleAvailable(LocalDate queryDate,Service serviceById,List<ServiceInstance> serviceInstances) {
 
         TreeSet<Tuple> treeSet = new TreeSet<>(combinedComparator);
 
@@ -58,9 +82,6 @@ public class ScheduleManager {
         if (!isValidDate(queryDate)) {
             // Lanzamos execption
         }
-
-        Service serviceById = serviceBeanImplementation.getService(serviceId);
-        List<ServiceInstance> serviceInstances = serviceBeanImplementation.getInstanceService(serviceId);
 
         int timeDiffInMinutes = 600;
 
@@ -70,7 +91,7 @@ public class ScheduleManager {
             .mapToObj(i->new Tuple(
                 timeInit + (serviceById.durationInMinute() * i),
                 serviceById.durationInMinute(),
-                serviceById.serviceConcurrency()
+                serviceInstances.size()
                 )
             )
             .collect(Collectors.toMap(Tuple::time,x->x))
@@ -85,13 +106,6 @@ public class ScheduleManager {
 
         treeSet.addAll(tupleFromService.values());
 
-        Tuple ceiling = treeSet.ceiling(new Tuple(1065,0,0));
-        Tuple floor = treeSet.floor(new Tuple(1065,0,0));
-
-        System.out.println("**************************************");
-        System.out.println(floor.getTimeFormatted());
-        System.out.println(ceiling.getTimeFormatted());
-        System.out.println("**************************************");
         //int[] unavailableHours = getUnavailableHours(queryDate);
 
         Map<Integer, Tuple> tuple = new HashMap<>();
@@ -111,14 +125,13 @@ public class ScheduleManager {
     }
 
     private void getAvailableHoursService(ServiceInstance si, 
-        
         Map<Integer, Tuple> tuple, LocalDate queryDate) {
         // TODO Auto-generated method stub
         int[] selectedHours = appointmentRepository.getAppointment(queryDate, Optional.ofNullable(si.serviceInstanceId()));
 
         for (int i = 0; i < selectedHours.length; i++) {
 
-            System.out.println("Selected hour: " + selectedHours[i]+" instance: "+si.serviceInstanceId());
+            logger.info("Selected hour: " + selectedHours[i]+" instance: "+si.serviceInstanceId());
             tuple.computeIfPresent(selectedHours[i], (t, u) -> u.removeServiceInstance());
         }
         //Tuple[] toArray = tuple.values().toArray(new Tuple[tupleSlots.length]);
@@ -130,5 +143,25 @@ public class ScheduleManager {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'isValidDate'");
         return Boolean.TRUE;
+    }
+
+    public List<ScheduleResponse> getScheduleResponse(LocalDate queryDate, Long serviceId) {
+        
+        Service serviceById = serviceBeanImplementation.getService(serviceId);
+        List<ServiceInstance> serviceInstances = serviceBeanImplementation.getInstanceService(serviceId);
+
+        List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+
+        for (ServiceInstance si : serviceInstances) {
+            Tuple[] scheduleAvailable = getScheduleAvailable(queryDate,serviceById,List.of(si));
+            ScheduleResponse scheduleResponse = new ScheduleResponse(
+                si.serviceInstanceId(),
+                si.employeeName(),
+                scheduleAvailable
+            );
+            scheduleResponses.add(scheduleResponse);
+        }
+
+        return scheduleResponses;
     }
 }

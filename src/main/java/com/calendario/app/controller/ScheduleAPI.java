@@ -1,13 +1,14 @@
 package com.calendario.app.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.calendario.app.model.response.ScheduleResponse;
 import com.calendario.app.service.ScheduleManager;
 
-import io.vertx.core.json.JsonObject;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -35,13 +36,43 @@ public class ScheduleAPI {
         @QueryParam("serviceId")
         Long serviceId
     ){
-        JsonObject json = JsonObject.of("null", queryDate)
-            .put("serviceInstanceId", serviceId);
-
         logger.debug("Inicia proceso de consulta");
 
         Tuple[] tuple = schedulerManager.getScheduleAvailable(queryDate, serviceId);
 
         return Response.ok(tuple).build();
+    }
+
+    @GET
+    @Path("/instance")
+    public Response getScheduleByServiceInstance(
+        @QueryParam("queryDate")
+        LocalDate queryDate,
+        @QueryParam("serviceId")
+        Long serviceId,
+        @QueryParam("serviceInstanceId")
+        Long serviceInstanceId
+    ){
+        logger.debug("Inicia proceso de consulta");
+
+        Tuple[] tuple = schedulerManager.getScheduleInstanceAvailable(queryDate, serviceId, serviceInstanceId);
+
+        return Response.ok(tuple).build();
+    }
+
+    
+    @GET
+    @Path("/instance-by")
+    public Response getScheduleBy(
+        @QueryParam("queryDate")
+        LocalDate queryDate,
+        @QueryParam("serviceId")
+        Long serviceId
+    ){
+        logger.debug("Inicia proceso de consulta");
+
+        List<ScheduleResponse> scheduleResponses = schedulerManager.getScheduleResponse(queryDate, serviceId);
+
+        return Response.ok(scheduleResponses).build();
     }
 }

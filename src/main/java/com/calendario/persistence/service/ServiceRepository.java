@@ -6,7 +6,6 @@ package com.calendario.persistence.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.Entity;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +53,7 @@ public class ServiceRepository  {
     public Service createService(Service serviceModel) {
         
         ServiceEntity serviceEntity = new ServiceEntity();
-        serviceEntity.setTitle(serviceModel.tittle());
+        serviceEntity.setTitle(serviceModel.title());
         serviceEntity.setDescription(serviceModel.description());
         serviceEntity.setDurationInMinute(serviceModel.durationInMinute());
         serviceEntity.setServiceConcurrency(serviceModel.serviceConcurrency());

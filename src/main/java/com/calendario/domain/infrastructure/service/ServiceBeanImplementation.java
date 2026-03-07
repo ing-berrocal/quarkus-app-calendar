@@ -26,7 +26,7 @@ public class ServiceBeanImplementation {
     }
     
     public Service getService(Long serviceId) {    
-        return serviceRepository.getServiceById(serviceId).orElseThrow();
+        return serviceRepository.getServiceById(serviceId).orElseThrow(() -> new RuntimeException("Service not found"));
     }
 
     public List<ServiceInstance> getInstanceService(Long serviceId) {

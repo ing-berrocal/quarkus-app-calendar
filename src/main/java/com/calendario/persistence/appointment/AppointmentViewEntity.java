@@ -46,11 +46,20 @@ public class AppointmentViewEntity {
     @Column(name = "description", nullable = false, length = 10)
     private String serviceDescription;
 
-    @Column(name = "fullname", nullable = false, length = 10)
+    @Column(name = "customer_name", nullable = false, length = 10)
     private String fullname;
+
+    @Column(name = "customer_email", nullable = false, length = 10)
+    private String email;
+
+    @Column(name = "customer_telephone", nullable = false, length = 10)
+    private String telephoneNumber;
 
     @Column(name = "status", nullable = false, length = 10)
     private String status;
+
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
 
     // Default constructor
     public AppointmentViewEntity() {
@@ -127,5 +136,26 @@ public class AppointmentViewEntity {
 
     public String getServiceDescription() {
         return serviceDescription;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setTelephoneNumber(String telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
+    }
+    public String getTelephoneNumber() {
+        return telephoneNumber;
     }
 }

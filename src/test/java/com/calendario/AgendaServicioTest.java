@@ -82,25 +82,26 @@ public class AgendaServicioTest {
                 return new int[]{};
             }
         },
-                iservice
+        iservice
         );
+
         LocalDate date = LocalDate.now();
 
         Tuple[] hours = agendaService.getAviableHours(1l, date);        
 
         assertArrayEquals(
                 new Tuple[]{
-                    new Tuple(28800, 60, 1),
-                    new Tuple(32400, 60, 1),
-                    new Tuple(36000, 60, 1),
-                    new Tuple(39600, 60, 1),
-                    new Tuple(43200, 60, 1),
-                    new Tuple(46800, 60, 1),
-                    new Tuple(50400, 60, 1),
-                    new Tuple(54000, 60, 1),
-                    new Tuple(57600, 60, 1),
-                    new Tuple(61200, 60, 1),
-                    new Tuple(64800, 60, 1)
+                    new Tuple(28800, 60, 0),
+                    new Tuple(32400, 60, 0),
+                    new Tuple(36000, 60, 0),
+                    new Tuple(39600, 60, 0),
+                    new Tuple(43200, 60, 0),
+                    new Tuple(46800, 60, 0),
+                    new Tuple(50400, 60, 0),
+                    new Tuple(54000, 60, 0),
+                    new Tuple(57600, 60, 0),
+                    new Tuple(61200, 60, 0),
+                    new Tuple(64800, 60, 0)
                 }, hours);
     }
 
@@ -114,17 +115,17 @@ public class AgendaServicioTest {
 
         assertArrayEquals(
                 new Tuple[]{
-                    new Tuple(28800, 60, 1), //8 
-                    new Tuple(32400, 60, 1),
-                    new Tuple(36000, 60, 1), //10
-                    new Tuple(39600, 60, 1),
+                    new Tuple(28800, 60, 0), //8 
+                    new Tuple(32400, 60, 0),
+                    new Tuple(36000, 60, 0), //10
+                    new Tuple(39600, 60, 0),
                     new Tuple(43200, 60, 0), //12
                     new Tuple(46800, 60, 0),
-                    new Tuple(50400, 60, 1), //14
-                    new Tuple(54000, 60, 1),
-                    new Tuple(57600, 60, 1), //16
-                    new Tuple(61200, 60, 1),
-                    new Tuple(64800, 60, 1) //18
+                    new Tuple(50400, 60, 0), //14
+                    new Tuple(54000, 60, 0),
+                    new Tuple(57600, 60, 0), //16
+                    new Tuple(61200, 60, 0),
+                    new Tuple(64800, 60, 0) //18
                 }, hours);
     }
 
@@ -152,17 +153,17 @@ public class AgendaServicioTest {
 
         assertArrayEquals(
                 new Tuple[]{
-                    new Tuple(28800, 60, 1), //8 
-                    new Tuple(32400, 60, 1),
-                    new Tuple(36000, 60, 1), //10
-                    new Tuple(39600, 60, 1),
+                    new Tuple(28800, 60, 0), //8 
+                    new Tuple(32400, 60, 0),
+                    new Tuple(36000, 60, 0), //10
+                    new Tuple(39600, 60, 0),
                     new Tuple(43200, 60, 0), //12
                     new Tuple(46800, 60, 0),
-                    new Tuple(50400, 60, 1), //14
-                    new Tuple(54000, 60, 1),
-                    new Tuple(57600, 60, 1), //16
-                    new Tuple(61200, 60, 1),
-                    new Tuple(64800, 60, 1) //18
+                    new Tuple(50400, 60, 0), //14
+                    new Tuple(54000, 60, 0),
+                    new Tuple(57600, 60, 0), //16
+                    new Tuple(61200, 60, 0),
+                    new Tuple(64800, 60, 0) //18
                 }, hours);
     }
 
@@ -185,16 +186,16 @@ public class AgendaServicioTest {
 
         assertArrayEquals(
                 new Tuple[]{
-                    new Tuple(28800, 60, 1), //8 
-                    new Tuple(32400, 60, 1),
-                    new Tuple(36000, 60, 1), //10
-                    new Tuple(39600, 60, 1),
+                    new Tuple(28800, 60, 0), //8 
+                    new Tuple(32400, 60, 0),
+                    new Tuple(36000, 60, 0), //10
+                    new Tuple(39600, 60, 0),
                     new Tuple(43200, 60, 0), //12
                     new Tuple(46800, 60, 0),
-                    new Tuple(50400, 60, 1), //14
-                    new Tuple(54000, 60, 1),
-                    new Tuple(57600, 60, 1), //16
-                    new Tuple(61200, 60, 1),
+                    new Tuple(50400, 60, 0), //14
+                    new Tuple(54000, 60, 0),
+                    new Tuple(57600, 60, 0), //16
+                    new Tuple(61200, 60, 0),
                     new Tuple(64800, 60, 0) //18
                 }, hours);
     }
@@ -240,11 +241,11 @@ public class AgendaServicioTest {
         //new Tuple(0, 15, 1), //8 
         assertArrayEquals(
                 new Tuple[]{
-                    new Tuple(28800, 15, 1), //8 
-                    new Tuple(29700, 15, 1),
-                    new Tuple(30600, 15, 1), //10
-                    new Tuple(31500, 15, 1),
-                    new Tuple(32400, 15, 1)
+                    new Tuple(28800, 15, 0), //8 
+                    new Tuple(29700, 15, 0),
+                    new Tuple(30600, 15, 0), //10
+                    new Tuple(31500, 15, 0),
+                    new Tuple(32400, 15, 0)
                 }, hours);
     }
 

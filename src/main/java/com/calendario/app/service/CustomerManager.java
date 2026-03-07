@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.calendario.app.exception.AppointmentException;
 import com.calendario.app.model.Customer;
 import com.calendario.persistence.customer.CustomerRepositoryImpl;
 
@@ -33,6 +34,14 @@ public class CustomerManager {
         return customerRepository.findByDocumentNumber(documentNumber);
     }
 
+    public List<Customer> searchCustomer(String text) {
+        return customerRepository.findByText(text);
+    }
+
+    public Optional<Customer> getCustomerById(Long id) {
+        return customerRepository.findById(id);
+    }
+
     @Transactional
     public void addCustomer(Customer customer) {
 
@@ -43,7 +52,7 @@ public class CustomerManager {
 
             logger.info("Customer founded");
 
-            throw new IllegalArgumentException("Email or Document Number already exists");
+            throw new AppointmentException("Email or Document Number already exists");
         }
 
         customerRepository.save(customer);
@@ -51,25 +60,32 @@ public class CustomerManager {
 
     @Transactional
     public void updateTercero(Long id, Customer tercero) {
+
         Optional<Customer> existingTerceroOpt = customerRepository.findById(id);
+        
         if (existingTerceroOpt.isEmpty()) {
-            throw new IllegalArgumentException("Tercero not found");
+            throw new AppointmentException("Tercero not found");
         }
+
         Customer existingTercero = existingTerceroOpt.get();
+        
         if (!existingTercero.getEmail().equals(tercero.getEmail()) && customerRepository.findByEmail(tercero.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new AppointmentException("Email already exists");
         }
+        
         if (!existingTercero.getDocumentNumber().equals(tercero.getDocumentNumber()) && customerRepository.findByDocumentNumber(tercero.getDocumentNumber()).isPresent()) {
-            throw new IllegalArgumentException("Document Number already exists");
+            throw new AppointmentException("Document Number already exists");
         }
-        existingTercero.setFullname(tercero.getFullname());
-        existingTercero.setNames(tercero.getNames());
-        existingTercero.setDocumentNumber(tercero.getDocumentNumber());
-        existingTercero.setTelephone(tercero.getTelephone());
-        existingTercero.setAddress(tercero.getAddress());
-        existingTercero.setEmail(tercero.getEmail());
-        existingTercero.setState(tercero.getState());
-        customerRepository.save(existingTercero);
+        
+        tercero.setId(id);
+        //existingTercero.setFullname(tercero.getFullname());
+        //existingTercero.setNames(tercero.getNames());
+        //existingTercero.setDocumentNumber(tercero.getDocumentNumber());
+        //existingTercero.setTelephone(tercero.getTelephone());
+        //existingTercero.setAddress(tercero.getAddress());
+        //existingTercero.setEmail(tercero.getEmail());
+        //existingTercero.setState(tercero.getState());
+        customerRepository.updateSave(tercero);
     }
 
     @Transactional

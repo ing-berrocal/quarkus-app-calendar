@@ -62,6 +62,14 @@ public class AppointmentManager {
         appointmentRepository.addAppointment(appointment);
     }
 
+    public void updateAppointment(Appointment appointment) {
+
+        if(Objects.nonNull(appointment.id())){
+        }
+
+        appointmentRepository.cancelAppointment(appointment);
+    }
+
     private ServiceInstance validateServiceInstance(Long serviceInstanceId) {
         return serviceRepository.getServiceInstanceById(serviceInstanceId)
         .orElseThrow(() -> new AppointmentException("ServiceInstance doesn't exist"));

@@ -3,6 +3,8 @@ package com.calendario.persistence.customer;
 
 import com.calendario.app.model.Customer;
 
+import io.quarkus.panache.common.Parameters;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -23,7 +25,13 @@ public class CustomerRepositoryImpl {
     }
 
     public List<Customer> findAll() {
-        return terceroEntityRepository.listAll().stream()
+        return terceroEntityRepository.listAll(Sort.by("fullName")).stream()
+                .map(this::toDomain).toList();
+    }
+
+    public List<Customer> findByText(String text) {
+        return terceroEntityRepository.list("lower(telephone) LIKE ?1", "%" + text.toLowerCase() + "%")
+                .stream()
                 .map(this::toDomain).toList();
     }
 
@@ -44,6 +52,30 @@ public class CustomerRepositoryImpl {
 
     public void save(Customer tercero) {
         terceroEntityRepository.persist(toEntity(tercero));
+    }
+
+    public void updateSave(Customer tercero) {
+
+        System.out.println("Updating customer: " + tercero.getId());
+
+        TerceroEntity terceroEntity = terceroEntityRepository.findById(tercero.getId());
+
+        terceroEntity.setFullName(tercero.getFullname());
+        terceroEntity.setDocumentNumber(tercero.getDocumentNumber());
+        terceroEntity.setTelephone(tercero.getTelephone());
+        terceroEntity.setAddress(tercero.getAddress());
+        //terceroEntity.setEmail(tercero.getEmail());
+        
+        /*
+        terceroEntityRepository.update("update TerceroEntity SET fullName = :fullName, documentNumber = :documentNumber, telephone = :telephone, address = :address where id = :id",
+        Parameters.with("fullName", tercero.getFullname())
+        .and("documentNumber", tercero.getDocumentNumber())
+        .and("telephone", tercero.getTelephone())
+        .and("address", tercero.getAddress())
+        .and("id", tercero.getId())
+        );
+        */            
+       terceroEntityRepository.persist(terceroEntity);
     }
 
     public void deleteById(Long id) {

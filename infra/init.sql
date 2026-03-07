@@ -77,19 +77,27 @@ INSERT INTO public.service
 values
 (nextval('service_id_seq'::regclass), 'Servicio 3', 20, 0);
 
+drop view view_appointment;
 create or replace view view_appointment as (
 select 
-a.id,a.created_date,
+a.id,
+a.created_date,
 a.appointment_date,
 a.appointment_time,
 a.service_instance,
-ss.description, 
-t.fullname,
-a.status 
+ss.id as service_id,
+ss.title as description, 
+t.id as customer_id,
+t.fullname as customer_name,
+t.telephone_number as customer_telephone,
+t.email as customer_email,
+a.status,
+e.full_name as employee_name 
 from appointment a
 join service_instance si on si.id = a.service_instance 
 join service ss on ss.id = si.service_id
 left join tercero t on t.id = a.customer_id
+left join employee e on e.id = a.customer_id 
 order by a.appointment_date, a.appointment_time 
 );
 
@@ -97,3 +105,5 @@ create or replace view view_service_instance as (
 select si.id,e.full_name,si.state from service_instance si
 left join employee e on si.employee_id = e.id
 );
+
+select * from tercero;

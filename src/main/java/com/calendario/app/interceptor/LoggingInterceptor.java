@@ -16,7 +16,7 @@ public class LoggingInterceptor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @AroundInvoke 
-    Object logInvocation(InvocationContext context) {
+    Object logInvocation(InvocationContext context) throws Exception {
       // ...log before
     Object proceed = null;
     try {
@@ -24,6 +24,9 @@ public class LoggingInterceptor {
     } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+        logger.error("Error occurred while invoking method: {}", context.getMethod().getName(), e);
+        // Optionally, rethrow the exception if you want to propagate it
+        throw e;
     }
       String name = context.getMethod().getDeclaringClass().getName();
 

@@ -7,8 +7,11 @@ package com.calendario.app.controller;
 import com.calendario.app.model.Appointment;
 import com.calendario.app.model.AppointmentView;
 import com.calendario.app.model.request.AppointmentRequest;
+import com.calendario.app.model.request.AppointmentStatusRequest;
 import com.calendario.app.service.AppointmentManager;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -29,6 +32,7 @@ import java.util.Optional;
  *
  * @author ITPB-RH
  */
+@Authenticated
 @Path("/appointment")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -38,6 +42,7 @@ public class AppointmentAPI {
     private AppointmentManager appointmentManager;
     
     @GET
+    @PermitAll 
     public List<AppointmentView> getAppointments( 
         @QueryParam("queryDate")
         LocalDate queryDate,
@@ -99,6 +104,17 @@ public class AppointmentAPI {
         0L); 
 
         appointmentManager.createAppointment(appointment);
+
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/edit-status")
+    public Response editAppointmentStatus(@Valid AppointmentStatusRequest appointmentRequest) {
+
+        Appointment appointment = new Appointment(appointmentRequest.getAppointmentId(),null,null,null,null); 
+
+        appointmentManager.updateAppointment(appointment);
 
         return Response.ok().build();
     }

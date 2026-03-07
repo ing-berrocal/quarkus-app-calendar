@@ -42,6 +42,19 @@ public class AppointmentRepository {
         return new Appointment(appointmentEntity.getId(),null,null,null,null);
     }
 
+    @Transactional
+    public Appointment cancelAppointment(Appointment appointment) {
+
+        AppointmentEntity byId = appointmentRepository.findById(appointment.id());
+
+        byId.setStatus("C");
+        byId.setUpdatedDate(LocalDateTime.now());
+
+        appointmentRepository.persistAndFlush(byId);
+
+        return new Appointment(byId.getId(),null,null,null,null);
+    }
+
     public boolean isAvailable(LocalDate queryDate, LocalTime queryTime, Long serviceInstanceId) {
         return appointmentRepository.count("#Appointment.byCountDate",
         Parameters.with("queryDate", queryDate)
@@ -61,8 +74,8 @@ public class AppointmentRepository {
         .map(a->new AppointmentView(a.getId(),
         a.getAppointmentDate(),
         a.getAppointmentTime(),a.getServiceInstance(),
-        null,a.getFullname(),a.getServiceDescription(),
-        true))
+        a.getCustomerId(),a.getFullname(),a.getEmail(),a.getTelephoneNumber(),a.getServiceDescription(),
+        a.getStatus().equals("A")))
         .toList();
     }
     
@@ -72,7 +85,7 @@ public class AppointmentRepository {
         .and("endDate", endDate))
         .stream()
         .map(a->new AppointmentView(a.getId(),a.getAppointmentDate(),a.getAppointmentTime(),a.getServiceInstance(),
-        null,a.getFullname(),a.getServiceDescription(),
+        null,a.getFullname(),a.getEmail(),a.getTelephoneNumber(),a.getServiceDescription(),
         true))
         .toList();
     }
