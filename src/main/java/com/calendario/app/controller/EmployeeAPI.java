@@ -4,6 +4,7 @@ import com.calendario.app.model.Employee;
 import com.calendario.app.model.request.EmployeeRequest;
 import com.calendario.app.service.EmployeeManager;
 
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -23,7 +24,7 @@ public class EmployeeAPI {
     }
 
     @POST
-    public Response addEmployee(EmployeeRequest employeeRequest) {
+    public Response addEmployee(@Valid EmployeeRequest employeeRequest) {
         // Add employee
 
         Employee employee = new Employee(employeeRequest.getFullName());
