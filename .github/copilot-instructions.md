@@ -49,4 +49,5 @@ This is a Quarkus-based Java 21 application. It exposes a REST API for CRUD oper
 - Update documentation and configuration when adding new features.
 
 ---
-If any conventions or workflows are unclear, check the `README.md` or ask for clarification.
+If any conventions or workflows are unclear, check the `README.md` or ask for 
+clarification.
