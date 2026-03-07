@@ -18,13 +18,8 @@ public class ApponinmentAppExceptionMapper implements ExceptionMapper<Appointmen
     @Override
     public Response toResponse(AppointmentException exception) {
         logger.error("An error occurred: ", exception);
-        if (exception instanceof AppointmentException) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ErrorMapper.createInstance(exception.getMessage()))
-                    .build();
-        }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(ErrorMapper.createInstance("An unexpected error occurred"))
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(ErrorMapper.createInstance(exception.getMessage()))
                 .build();
     }
 }
