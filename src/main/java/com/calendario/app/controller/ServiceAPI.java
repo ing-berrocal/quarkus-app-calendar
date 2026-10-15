@@ -108,7 +108,6 @@ public class ServiceAPI {
     @Path("/edit/{id}")
     public Response editServices(@PathParam("id") Long id,
             @Valid ServiceRequest serviceRequest) {
-
                 
         var serviceParam = new Service(id,
                 serviceRequest.getTitle(),

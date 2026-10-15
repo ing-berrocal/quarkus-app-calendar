@@ -91,8 +91,8 @@ public class ServiceRepository  {
         ServiceEntity byId = serviceRepository.findById(service.serviceId());
 
         byId.setDescription(service.description());
-
-        serviceRepository.persist(byId);
+        byId.setTitle(service.title());
+        serviceRepository.persistAndFlush(byId);
         serviceRepository.getEntityManager().detach(byId);
 
         return new Service(null,null, null, 0, 0);
