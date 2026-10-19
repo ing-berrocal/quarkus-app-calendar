@@ -13,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import java.util.List;
 
 /**
@@ -28,6 +27,9 @@ public class ServiceEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "code", length = 50, unique = true)
+    private String code;
+
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
@@ -40,7 +42,6 @@ public class ServiceEntity {
     @Column(name = "service_concurrency", nullable = false)
     private Integer serviceConcurrency;
     
-    @Transient
     @Column(name = "state", nullable = false)
     private Boolean state;    
     
@@ -57,6 +58,14 @@ public class ServiceEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setTitle(String tittle) {

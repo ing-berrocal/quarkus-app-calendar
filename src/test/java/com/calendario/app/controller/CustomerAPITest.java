@@ -216,7 +216,7 @@ class CustomerAPITest {
         .body(request)
         .when().post("/customer")
         .then()
-            .statusCode(201); // The API doesn't seem to validate required fields
+            .statusCode(400);
     }
 
     @Test
@@ -225,6 +225,7 @@ class CustomerAPITest {
         CustomerRequest request = new CustomerRequest();
         request.setFullName("Test User");
         request.setDocumentNumber("12345678");
+        request.setTelephone("555666777");
         request.setEmail("test@example.com");
 
         // Mock that customer doesn't exist initially

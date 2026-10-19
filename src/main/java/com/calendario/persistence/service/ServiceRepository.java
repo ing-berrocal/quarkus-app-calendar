@@ -27,11 +27,7 @@ public class ServiceRepository  {
 
     public Optional<Service> getServiceById(Long id){
         return serviceRepository.findByIdOptional(id)
-                .map(e->new Service(e.getId(), 
-                        e.getTitle(),
-                        e.getDescription(), 
-                        e.getDurationInMinute(), 
-                        e.getServiceConcurrency()));                
+                .map(this::toModel);                
     }
     
     public List<ServiceInstance> getServicesInstanceByServiceId(Long id){
@@ -53,6 +49,7 @@ public class ServiceRepository  {
     public Service createService(Service serviceModel) {
         
         ServiceEntity serviceEntity = new ServiceEntity();
+        serviceEntity.setCode(serviceModel.code());
         serviceEntity.setTitle(serviceModel.title());
         serviceEntity.setDescription(serviceModel.description());
         serviceEntity.setDurationInMinute(serviceModel.durationInMinute());
@@ -71,17 +68,13 @@ public class ServiceRepository  {
         
         serviceRepository.persist(serviceEntity);
         
-        return new Service(serviceEntity.getId(), "","", 0, 0);
+        return toModel(serviceEntity);
     }
 
     public List<Service> getServices() {
         return serviceRepository.findAll()
                 .stream()
-                .map(e->new Service(e.getId(), 
-                e.getTitle(),
-                        e.getDescription(), 
-                        e.getDurationInMinute(), 
-                        e.getServiceConcurrency()))
+                .map(this::toModel)
                 .collect(Collectors.toList()); 
     }
 
@@ -92,10 +85,31 @@ public class ServiceRepository  {
 
         byId.setDescription(service.description());
         byId.setTitle(service.title());
+        if (service.code() != null) {
+            byId.setCode(service.code());
+        }
         serviceRepository.persistAndFlush(byId);
         serviceRepository.getEntityManager().detach(byId);
 
         return new Service(null,null, null, 0, 0);
 
+    }
+
+    @Transactional
+    public Optional<Service> changeState(Long id, boolean state) {
+        return serviceRepository.findByIdOptional(id).map(e -> {
+            e.setState(state);
+            return toModel(e);
+        });
+    }
+
+    private Service toModel(ServiceEntity e) {
+        return new Service(e.getId(),
+                e.getCode(),
+                e.getTitle(),
+                e.getDescription(),
+                e.getDurationInMinute(),
+                e.getServiceConcurrency(),
+                e.getState());
     }
 }

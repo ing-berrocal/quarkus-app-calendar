@@ -10,10 +10,15 @@ package com.calendario.app.model;
  */
 public record Service(
     Long serviceId,
+    String code,
     String title,
     String description, 
     int durationInMinute, 
-    int serviceConcurrency
+    int serviceConcurrency,
+    Boolean state
     ) {
-        
+
+    public Service(Long serviceId, String title, String description, int durationInMinute, int serviceConcurrency) {
+        this(serviceId, null, title, description, durationInMinute, serviceConcurrency, Boolean.TRUE);
+    }
 }
