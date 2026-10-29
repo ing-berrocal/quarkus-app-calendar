@@ -47,12 +47,12 @@ public class CustomerManager {
 
         logger.info("Adding customer {}", customer);
 
-        if (customerRepository.findByEmail(customer.getEmail()).isPresent() ||
-            customerRepository.findByDocumentNumber(customer.getDocumentNumber()).isPresent()) {
+        if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+            throw new AppointmentException("Email already exists");
+        }
 
-            logger.info("Customer founded");
-
-            throw new AppointmentException("Email or Document Number already exists");
+        if (customerRepository.findByDocumentNumber(customer.getDocumentNumber()).isPresent()) {
+            throw new AppointmentException("Document Number already exists");
         }
 
         customerRepository.save(customer);
@@ -68,16 +68,13 @@ public class CustomerManager {
         }
 
         Customer existingTercero = existingTerceroOpt.get();
-        
-        if (!existingTercero.getEmail().equals(tercero.getEmail()) && customerRepository.findByEmail(tercero.getEmail()).isPresent()) {
-            throw new AppointmentException("Email already exists");
-        }
-        
+
         if (!existingTercero.getDocumentNumber().equals(tercero.getDocumentNumber()) && customerRepository.findByDocumentNumber(tercero.getDocumentNumber()).isPresent()) {
             throw new AppointmentException("Document Number already exists");
         }
         
         tercero.setId(id);
+        tercero.setEmail(existingTercero.getEmail());
         //existingTercero.setFullname(tercero.getFullname());
         //existingTercero.setNames(tercero.getNames());
         //existingTercero.setDocumentNumber(tercero.getDocumentNumber());

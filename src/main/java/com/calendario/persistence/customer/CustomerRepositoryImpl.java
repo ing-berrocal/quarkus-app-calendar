@@ -51,7 +51,9 @@ public class CustomerRepositoryImpl {
     }
 
     public void save(Customer tercero) {
-        terceroEntityRepository.persist(toEntity(tercero));
+        TerceroEntity entity = toEntity(tercero);
+        terceroEntityRepository.persist(entity);
+        tercero.setId(entity.getId());
     }
 
     public void updateSave(Customer tercero) {

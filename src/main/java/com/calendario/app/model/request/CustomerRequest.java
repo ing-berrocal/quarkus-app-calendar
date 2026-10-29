@@ -10,7 +10,6 @@ public class CustomerRequest {
     @NotBlank
     @Size(max = 200)
     private String fullName;
-    @NotBlank
     @Size(max = 100)
     private String documentNumber;
     @NotBlank

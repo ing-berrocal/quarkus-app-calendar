@@ -87,7 +87,6 @@ public class CustomerAPI {
         customer.setDocumentNumber(customerRequest.getDocumentNumber());    
         customer.setTelephone(customerRequest.getTelephone());
         customer.setAddress(customerRequest.getAddress());
-        customer.setEmail(customerRequest.getEmail());
         //customer.setState(true);
         customerManager.updateTercero(customerRequest.getId(), customer);
         
