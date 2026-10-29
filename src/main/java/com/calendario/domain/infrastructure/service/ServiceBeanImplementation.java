@@ -40,5 +40,10 @@ public class ServiceBeanImplementation {
     public Service edit(Service service) {
         return serviceRepository.editServiceDescription(service);
     }
+
+    public Service changeState(Long id, boolean state) {
+        return serviceRepository.changeState(id, state)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+    }
     
 }

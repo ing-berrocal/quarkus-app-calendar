@@ -1,12 +1,25 @@
 package com.calendario.app.model.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class CustomerRequest {
     
     private Long id;
+    @NotBlank
+    @Size(max = 200)
     private String fullName;
+    @Size(max = 100)
     private String documentNumber;
+    @NotBlank
+    @Size(max = 100)
     private String telephone;
+    @Size(max = 100)
     private String address;
+    @NotBlank
+    @Email
+    @Size(max = 100)
     private String email;
 
     public Long getId() {

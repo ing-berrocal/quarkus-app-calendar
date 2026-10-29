@@ -43,5 +43,10 @@ public class ServiceManager {
     public Service editService(Service service) {
         return serviceBeanImplementation.edit(service);        
     }
+
+
+    public Service changeState(Long id, boolean state) {
+        return serviceBeanImplementation.changeState(id, state);
+    }
     
 }

@@ -6,6 +6,7 @@ package com.calendario.app.controller;
 
 import com.calendario.app.model.Service;
 import com.calendario.app.model.request.ServiceRequest;
+import com.calendario.app.model.request.ServiceStatusRequest;
 import com.calendario.app.service.ServiceManager;
 import com.calendario.domain.model.ServiceInstance;
 
@@ -25,8 +26,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.ResponseBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -74,12 +75,9 @@ public class ServiceAPI {
     public Response getServicesById(@PathParam("id") Long serviceId) {
         try {
             Service byId = serviceManager.findById(serviceId);
-            ResponseBuilder ok = Response.ok(byId);
-            return ok.build();
+            return Response.ok(byId).build();
         } catch (Exception e) {
-            // Handle exception
             logger.info("Error fetching service by ID: {}", serviceId, e);
-            System.out.println("Error fetching service by ID: " + serviceId + " - " + e.getMessage());
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -88,20 +86,19 @@ public class ServiceAPI {
     public Response addService(@Valid ServiceRequest serviceRequest) {
 
         var serviceParam = new Service(null,
+                serviceRequest.getCode(),
                 serviceRequest.getTitle(),
                 serviceRequest.getDescription(),
                 serviceRequest.getDurationInMinute(),
-                serviceRequest.getServiceConcurrency());
+                serviceRequest.getServiceConcurrency(),
+                Boolean.TRUE);
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            logger.error("Error adding service: {}", e);
+        var created = serviceManager.persist(serviceParam);
+
+        if (created != null && created.serviceId() != null) {
+            return Response.created(URI.create("/service/by/" + created.serviceId())).entity(created).build();
         }
-
-        serviceManager.persist(serviceParam);
-
-        return Response.ok().build();
+        return Response.status(Response.Status.CREATED).build();
     }
 
     @PUT
@@ -110,10 +107,12 @@ public class ServiceAPI {
             @Valid ServiceRequest serviceRequest) {
                 
         var serviceParam = new Service(id,
+                serviceRequest.getCode(),
                 serviceRequest.getTitle(),
                 serviceRequest.getDescription(),
                 serviceRequest.getDurationInMinute(),
-                serviceRequest.getServiceConcurrency());
+                serviceRequest.getServiceConcurrency(),
+                Boolean.TRUE);
 
 
         serviceManager.editService(serviceParam);
@@ -124,7 +123,13 @@ public class ServiceAPI {
     @PUT
     @Path("/status/{id}")
     public Response editStatus(@PathParam("id") Long id,
-            @Valid ServiceRequest serviceRequest) {
+            @Valid ServiceStatusRequest statusRequest) {
+        try {
+            serviceManager.changeState(id, statusRequest.getState());
+        } catch (RuntimeException e) {
+            logger.info("Error changing service status: {}", id, e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return Response.ok().build();
     }
 }

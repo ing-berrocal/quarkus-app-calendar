@@ -7,6 +7,8 @@ import com.calendario.app.model.request.SearchRequest;
 import com.calendario.app.service.CustomerManager;
 
 import io.quarkus.security.Authenticated;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;  
 import jakarta.ws.rs.POST;
@@ -16,7 +18,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Authenticated
+//@Authenticated
 @Path("/customer")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -50,7 +52,7 @@ public class CustomerAPI {
     }
 
     @POST
-    public Response addCustomer(CustomerRequest customerRequest) {
+    public Response addCustomer(@Valid CustomerRequest customerRequest) {
 
         /*
         customerManager.getCustomerByDocumentNumber(customerRequest.getDocumentNumber())
@@ -73,14 +75,18 @@ public class CustomerAPI {
     }
 
     @PUT
-    public Response updateCustomer(CustomerRequest customerRequest) {
+    public Response updateCustomer(@Valid CustomerRequest customerRequest) {
+
+        if (customerRequest.getId() == null) {
+            throw new BadRequestException("Customer id is required");
+        }
+
            
         Customer customer = new Customer();
         customer.setFullname(customerRequest.getFullName());
         customer.setDocumentNumber(customerRequest.getDocumentNumber());    
         customer.setTelephone(customerRequest.getTelephone());
         customer.setAddress(customerRequest.getAddress());
-        //customer.setEmail(customerRequest.getEmail());
         //customer.setState(true);
         customerManager.updateTercero(customerRequest.getId(), customer);
         

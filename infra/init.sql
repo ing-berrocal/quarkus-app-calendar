@@ -1,3 +1,4 @@
+-- BD Postgres postgres:16.2
 --OK
 create table public.empresa(
     id serial not null,
@@ -24,12 +25,17 @@ create table public.tercero(
 --drop table public.service;
 create table public.service(
     id serial not null,
+    code varchar(50) unique,
 	title varchar(100) not null,
     description varchar(250),
     duration_in_minute integer not null,
     service_concurrency integer not null,
+    state bool not null default true,
     CONSTRAINT PK_SERVICE primary key(id)
 );
+-- Migracion para bases existentes:
+-- alter table public.service add column code varchar(50) unique;
+-- alter table public.service add column state boolean not null default true;
 
 --drop table public.service_instance;
 create table public.service_instance(

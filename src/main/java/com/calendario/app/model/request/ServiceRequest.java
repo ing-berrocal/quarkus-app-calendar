@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 
 public class ServiceRequest {
     
+    @Size(max = 50)
+    private String code;
     @NotBlank
     @NotEmpty
     @Size(min = 3,max = 100)
@@ -25,6 +27,12 @@ public class ServiceRequest {
     @Min(value = 1)
     private int serviceConcurrency;
 
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
     public void setTitle(String title) {
         this.title = title;
     }

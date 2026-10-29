@@ -51,7 +51,9 @@ public class CustomerRepositoryImpl {
     }
 
     public void save(Customer tercero) {
-        terceroEntityRepository.persist(toEntity(tercero));
+        TerceroEntity entity = toEntity(tercero);
+        terceroEntityRepository.persist(entity);
+        tercero.setId(entity.getId());
     }
 
     public void updateSave(Customer tercero) {
@@ -64,14 +66,15 @@ public class CustomerRepositoryImpl {
         terceroEntity.setDocumentNumber(tercero.getDocumentNumber());
         terceroEntity.setTelephone(tercero.getTelephone());
         terceroEntity.setAddress(tercero.getAddress());
-        //terceroEntity.setEmail(tercero.getEmail());
+        terceroEntity.setEmail(tercero.getEmail());
         
         /*
-        terceroEntityRepository.update("update TerceroEntity SET fullName = :fullName, documentNumber = :documentNumber, telephone = :telephone, address = :address where id = :id",
+        terceroEntityRepository.update("update TerceroEntity SET fullName = :fullName, documentNumber = :documentNumber, telephone = :telephone, address = :address, email = :email where id = :id",
         Parameters.with("fullName", tercero.getFullname())
         .and("documentNumber", tercero.getDocumentNumber())
         .and("telephone", tercero.getTelephone())
         .and("address", tercero.getAddress())
+        .and("email", tercero.getEmail())
         .and("id", tercero.getId())
         );
         */            

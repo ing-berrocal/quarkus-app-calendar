@@ -4,23 +4,23 @@
  */
 package com.calendario.app.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import com.calendario.app.model.Customer;
 import com.calendario.app.model.request.CustomerRequest;
 import com.calendario.app.service.CustomerManager;
 
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
+import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.util.List;
-import java.util.Optional;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 class CustomerAPITest {
@@ -144,8 +144,11 @@ class CustomerAPITest {
         Mockito.when(customerManager.getCustomerByDocumentNumber("11223344"))
                .thenReturn(Optional.empty());
 
-        // Mock addCustomer method (void method)
-        Mockito.doNothing().when(customerManager).addCustomer(Mockito.any(Customer.class));
+        Mockito.doAnswer(invocation -> {
+            Customer customer = invocation.getArgument(0);
+            customer.setId(42L);
+            return null;
+        }).when(customerManager).addCustomer(Mockito.any(Customer.class));
 
         // Act & Assert
         given().basePath("/api")
@@ -154,6 +157,7 @@ class CustomerAPITest {
         .when().post("/customer")
         .then()
             .statusCode(201)
+            .body("id", equalTo(42))
             .body("fullname", equalTo("Carlos Rodríguez"))
             .body("documentNumber", equalTo("11223344"))
             .body("telephone", equalTo("555666777"))
@@ -216,7 +220,7 @@ class CustomerAPITest {
         .body(request)
         .when().post("/customer")
         .then()
-            .statusCode(201); // The API doesn't seem to validate required fields
+            .statusCode(400);
     }
 
     @Test
@@ -225,6 +229,7 @@ class CustomerAPITest {
         CustomerRequest request = new CustomerRequest();
         request.setFullName("Test User");
         request.setDocumentNumber("12345678");
+        request.setTelephone("555666777");
         request.setEmail("test@example.com");
 
         // Mock that customer doesn't exist initially

@@ -118,7 +118,7 @@ class ServiceAPITest {
         .body(req)
         .when().post("/service")
         .then()
-            .statusCode(200);
+            .statusCode(201);
     }
 
     @Test
@@ -154,18 +154,12 @@ class ServiceAPITest {
     }
 
     @Test
-    void testEditStatus_notImplemented() {
-        ServiceRequest req = new ServiceRequest();
-        req.setTitle("Edit");
-        req.setDescription("EditDesc");
-        req.setDurationInMinute(20);
-        req.setServiceConcurrency(2);
-
+    void testEditStatus_success() {
         given().basePath("/api")
         .contentType(ContentType.JSON)
-        .body(req)
+        .body("{\"state\": false}")
         .when().put("/service/status/1")
         .then()
-            .statusCode(200 ); // O ajusta según el comportamiento real
+            .statusCode(200);
     }
 }
